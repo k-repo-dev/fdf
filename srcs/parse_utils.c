@@ -6,13 +6,13 @@
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 10:46:40 by krepo             #+#    #+#             */
-/*   Updated: 2025/08/07 10:58:17 by krepo            ###   ########.fr       */
+/*   Updated: 2025/08/11 12:41:28 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
 
-int	count_matrix_dimensions(t_app *fdf)
+int	count_grid_dims(t_app *fdf)
 {
 	int		fd;
 	char	*line;
@@ -21,70 +21,56 @@ int	count_matrix_dimensions(t_app *fdf)
 	if (fd == -1)
 		exit_error(fdf, FD_ERR);
 	line = get_next_line(fd);
+	if (!line)
+		exit_error(fdf, GET_NEXT_LINE_ERR);
 	if (line)
 	{
-		fdf->matrix_height++;
-		count_matrix_width(fdf, line);
-		free(line);
+		fdf->grid_h++;
+		count_grid_width(fdf, line);
 	}
-	while ((line = get_next_line(fd)))
+	while (line)
 	{
-		count_matrix_width(fdf, line);
-		fdf->matrix_height++;
 		free(line);
+		line = get_next_line(fd);
+		if (line)
+		{
+			count_grid_width(fdf, line);
+			fdf->grid_h++;
+		}
 	}
 	close(fd);
-	return (fdf->matrix_height);
+	return (fdf->grid_h);
 }
 
-void	count_matrix_width(t_app *fdf, char *line)
+void	count_grid_width(t_app *fdf, char *line)
 {
-	char	**split;
-	int		count;
+	int	line_width;
+	int	i;
 
-	split = ft_split(line, ' ');
-	if (!split)
-		exit_error(fdf, PARSING_ERR);
-	count = 0;
-	while (split[count])
-	{
-		free(split[count]);
-		count++;
-	}
-	free(split);
-	if (fdf->matrix_height == 1)
-		fdf->matrix_width = count;
-	else if (count != fdf->matrix_width)
-	{
-		ft_putstr_fd("Error: Inconsistent row width.\n", 2);
-	exit_error(fdf, PARSING_ERR);
-	}
-}
-
-t_pixel	**init_pixel_matrix(t_app *fdf)
-{
-	t_pixel	**space;
-	int		i;
-
-	space = (t_pixel **)malloc(sizeof(t_pixel *) * fdf->matrix_height);
-	if (!space)
-		exit_error(fdf, MALLOC_ERR);
+	line_width = 0;
 	i = 0;
-	while (i < fdf->matrix_height)
+	while (line[i])
 	{
-		space[i] = (t_pixel *)malloc(sizeof(t_pixel) * fdf->matrix_width);
-		if (!space[i])
-			exit_error(fdf, MALLOC_ERR);
-		i++;
+		if (line[i] != ' ' && line[i] != '\0')
+			line_width++;
+		while (line[i] != ' ' && line[i] != '\0')
+			i++;
+		while (line[i] == ' ' && line[i] != '\0')
+			i++;
+		if (line[i] == '-' || line[i] == '+')
+			i++;
+		if (!ft_strncmp(&line[i], "\n", 2) && (line[i + 1]) == '\0')
+			i++;
 	}
-	return (space);
+	if (line_width > fdf->grid_w)
+		fdf->grid_w = line_width;
 }
 
-void	save_pixel_coordinate(t_pixel **space, int x, int y, int z)
+void	save_point_coords(t_point **space, int x, int y, int z)
 {
 	if (!space)
 		return ;
-	space[y][x].x = (float)x;
-	space[y][x].y = (float)y;
-	space[y][x].z = (float)z;
+	space[y][x].x = x;
+	space[y][x].y = y;
+	space[y][x].z = z;
 }

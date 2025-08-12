@@ -6,7 +6,7 @@
 #    By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/28 12:56:25 by krepo             #+#    #+#              #
-#    Updated: 2025/08/07 15:36:00 by krepo            ###   ########.fr        #
+#    Updated: 2025/08/11 12:25:12 by krepo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,8 +16,9 @@ SRC_DIR		:= srcs
 OBJ_DIR		:= objs
 INC_DIR		:= include
 
-SRCS		:= calculate.c draw.c draw_line.c fdf.c hooks.c manipulate_view.c \
-			   memory.c parse.c parse_utils.c rotate.c fdf_utils.c
+SRCS		:= draw_points.c draw_utils.c fdf.c input.c line_draw.c \
+			   line_draw_utils.c mem_and_err.c parse.c parse_utils.c \
+			   proj_calc.c reset.c view_control.c
 
 HEADER		:= fdf.h
 

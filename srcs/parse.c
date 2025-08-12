@@ -6,25 +6,26 @@
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 10:25:44 by krepo             #+#    #+#             */
-/*   Updated: 2025/08/07 10:46:22 by krepo            ###   ########.fr       */
+/*   Updated: 2025/08/11 14:09:28 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
 
 static void	parse_lines(t_app *fdf);
-static void	parse_split_line(t_app *fdf, char **split_line, int y);
-static void	free_str_arr(char ***arr);
+static bool	parse_line_split(t_app *fdf, char **split_line, int y);
+static bool	parse_coords(t_app *fdf, char **cords, int x, int y);
+static void	free_str_array(char ***arr, int i);
 
-t_pixel	**parse_fdf_file(t_app *fdf)
+t_point	**parse_map(t_app *fdf)
 {
-	count_matrix_dimensions(fdf);
-	if (fdf->matrix_height == 0 || fdf->matrix_width == 0)
+	count_grid_dims(fdf);
+	if (fdf->grid_h == 0 || fdf->grid_w == 0)
 		exit_error(fdf, PARSING_ERR);
-	fdf->world = init_pixel_matrix(fdf);
+	fdf->world = init_point_grid(fdf);
 	if (!fdf->world)
 		exit_error(fdf, MALLOC_ERR);
-	fdf->screen = init_pixel_matrix(fdf);
+	fdf->screen = init_point_grid(fdf);
 	if (!fdf->screen)
 		exit_error(fdf, MALLOC_ERR);
 	parse_lines(fdf);
@@ -35,62 +36,77 @@ static void	parse_lines(t_app *fdf)
 {
 	int		fd;
 	char	*line;
+	char	**split_line;
 	int		y;
 
 	fd = open(fdf->file_path, O_RDONLY);
 	if (fd == -1)
 		exit_error(fdf, FD_ERR);
 	y = 0;
-	while (y < fdf->matrix_height)
+	while (y < fdf->grid_h)
 	{
 		line = get_next_line(fd);
 		if (!line)
+		{
+			close(fd);
 			exit_error(fdf, GET_NEXT_LINE_ERR);
-		parse_split_line(fdf, ft_split(line, ' '), y);
+		}
+		split_line = ft_split(line, ' ');
 		free(line);
+		if (!split_line || !parse_line_split(fdf, split_line, y))
+		{
+			free_str_array(&split_line, 0);
+			close(fd);
+			exit_error(fdf, PARSING_ERR);
+		}
+		free_str_array(&split_line, 0);
 		y++;
 	}
 	close(fd);
 }
 
-static void	parse_split_line(t_app *fdf, char **split_line, int y)
+static bool	parse_line_split(t_app *fdf, char **split_line, int y)
 {
+	char	**coords;
 	int		x;
-	char	**tmp;
-	int		val;
 
-	if (!split_line)
-		exit_error(fdf, PARSING_ERR);
 	x = 0;
-	while (split_line[x])
+	while (x < fdf->grid_w)
 	{
-		tmp = ft_split(split_line[x], ',');
-		if (!tmp || !tmp[0])
+		coords = ft_split(split_line[x], ',');
+		if (!coords || !coords[0])
 		{
-			free_str_arr(&split_line);
-			exit_error(fdf, PARSING_ERR);
+			free_str_array(&coords, x);
+			return (false);
 		}
-		val = ft_atoi_safe(tmp[0]);
-		if (!val)
+		if (!parse_coords(fdf, coords, x, y))
 		{
-			free_str_arr(&split_line);
-			free_str_arr(&tmp);
-			exit_error(fdf, PARSING_ERR);
+			free_str_array(&split_line, x);
+			return (false);
 		}
-		save_pixel_coordinates(fdf->world, x, y, val);
-		free_str_arr(&tmp);
+		free_str_array(&coords, 0);
 		x++;
 	}
-	free_str_arr(&split_line);
+	return (true);
 }
 
-static void	free_str_arr(char ***arr)
+static bool	parse_coords(t_app *fdf, char **coords, int x, int y)
 {
-	int	i;
+	int	tmp_val;
+	int	val;
 
+	tmp_val = ft_atoi_safe(coords[0]);
+	if (tmp_val == 0 && coords[0][0] != '0')
+		return (false);
+	val = tmp_val;
+	save_point_coords(fdf->world, x, y, val);
+	return (true);
+}
+
+static void	free_str_array(char ***arr, int i)
+{
 	if (!*arr)
 		return ;
-	i = 0;
 	while ((*arr)[i])
 	{
 		free((*arr)[i]);

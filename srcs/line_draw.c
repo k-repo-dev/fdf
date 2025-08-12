@@ -1,33 +1,55 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   draw_line.c                                        :+:      :+:    :+:   */
+/*   line_draw.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/07 12:06:31 by krepo             #+#    #+#             */
-/*   Updated: 2025/08/07 12:17:49 by krepo            ###   ########.fr       */
+/*   Created: 2025/08/11 09:12:08 by krepo             #+#    #+#             */
+/*   Updated: 2025/08/11 12:33:13 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
 
-static void	init_line_calc_struct(t_line_calc *line);
+static void	draw_bresenham(t_app *fdf, t_line_vars line);
+static void	init_line_vars(t_line_vars *line);
 
-void	draw_line(t_app *fdf, t_pixel p0, t_pixel p1)
+void	draw_lines(t_app *fdf)
 {
-	t_line_calc	line;
-	int			color;
+	t_line_vars	line;
+	int			x;
+	int			y;
 
-	line.x0 = round(p0.x + fdf->x_move_view);
-	line.y0 = round(p0.y + fdf->y_move_view);
-	line.x1 = round(p1.x + fdf->x_move_view);
-	line.y1 = round(p1.y + fdf->y_move_view);
-	init_line_calc_struct(&line);
-	color = 0xFFFFFF;
+	y = 0;
+	while (y < fdf->grid_h)
+	{
+		x = 0;
+		while (x < fdf->grid_w)
+		{
+			set_line_start(fdf, &line, x, y);
+			if (x + 1 < fdf->grid_w)
+			{
+				set_line_end(fdf, &line, x + 1, y);
+				draw_bresenham(fdf, line);
+			}
+			if (y + 1 < fdf->grid_h)
+			{
+				set_line_end(fdf, &line, x, y + 1);
+				draw_bresenham(fdf, line);
+			}
+			x++;
+		}
+		y++;
+	}
+}
+
+static void	draw_bresenham(t_app *fdf, t_line_vars line)
+{
+	init_line_vars(&line);
 	while (1)
 	{
-		pixel_to_img(fdf, line.x0, line.y0, color);
+		put_pixel(fdf, line.x0, line.y0, fdf->color);
 		if (line.x0 == line.x1 && line.y0 == line.y1)
 			break ;
 		line.e2 = 2 * line.err;
@@ -44,10 +66,10 @@ void	draw_line(t_app *fdf, t_pixel p0, t_pixel p1)
 	}
 }
 
-static void	init_line_calc_struct(t_line_calc *line)
+static void	init_line_vars(t_line_vars *line)
 {
 	line->dx = abs(line->x1 - line->x0);
-	if (line->x0 < line->y1)
+	if (line->x0 < line->x1)
 		line->sx = 1;
 	else
 		line->sx = -1;
@@ -55,6 +77,6 @@ static void	init_line_calc_struct(t_line_calc *line)
 	if (line->y0 < line->y1)
 		line->sy = 1;
 	else
-		line->sy =-1;
+		line->sy = -1;
 	line->err = line->dx + line->dy;
 }
