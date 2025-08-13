@@ -6,7 +6,7 @@
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 08:56:17 by krepo             #+#    #+#             */
-/*   Updated: 2025/08/11 13:38:05 by krepo            ###   ########.fr       */
+/*   Updated: 2025/08/12 15:31:44 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	mouse_press(int button, int x, int y, void *param)
 int	close_win(void *param)
 {
 	t_app	*fdf;
+
 	fdf = (t_app *)param;
 	exit_success(fdf);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 12:50:00 by krepo             #+#    #+#             */
-/*   Updated: 2025/08/11 12:26:02 by krepo            ###   ########.fr       */
+/*   Updated: 2025/08/13 10:01:30 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <fcntl.h>
 # include <stdio.h>
 # include <stdbool.h>
+# include <limits.h>
 
 # define WIN_WIDTH	1920
 # define WIN_HEIGHT	1080
@@ -116,9 +117,10 @@ void	put_pixel(t_app *fdf, int x, int y, int color);
 t_point	**parse_map(t_app *fdf);
 
 // Function prototypes parse_utils.c
-int	count_grid_dims(t_app *fdf);
+int		count_grid_dims(t_app *fdf);
 void	count_grid_width(t_app *fdf, char *line);
 void	save_point_coords(t_point **space, int x, int y, int z);
+bool	parse_coords(t_app *fdf, char **coords, int x, int y);
 
 // Function prototypes draw_points.c
 void	render_frame(t_app *fdf);
@@ -143,9 +145,9 @@ void	calc_center_offset(t_app *fdf);
 
 // Function prototypes input.c
 void	setup_input(t_app *fdf);
-int	mouse_press(int button, int x, int y, void *param);
-int	close_win(void *param);
-int	key_press(int keycode, void *param);
+int		mouse_press(int button, int x, int y, void *param);
+int		close_win(void *param);
+int		key_press(int keycode, void *param);
 
 // Function prototypes view_control.c
 void	move_view(t_app *fdf, int keycode);
@@ -161,5 +163,10 @@ void	reset_view(t_app *fdf);
 void	exit_success(t_app *fdf);
 void	exit_error(t_app *fdf, int error);
 void	cleanup(t_app *fdf);
+void	free_str_array(char ***arr, int i);
+
+// Function prototypes utils.c
+void	trim_trailing_whitespace(char *str);
+bool	ft_atoi_safe(const char *nptr, int *out);
 
 #endif

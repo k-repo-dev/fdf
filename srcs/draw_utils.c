@@ -6,12 +6,11 @@
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 08:48:03 by krepo             #+#    #+#             */
-/*   Updated: 2025/08/11 10:26:42 by krepo            ###   ########.fr       */
+/*   Updated: 2025/08/12 15:28:57 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
-
 
 float	deg_to_rad(float deg)
 {
@@ -27,7 +26,7 @@ t_point	**init_point_grid(t_app *fdf)
 	if (!space)
 		exit_error(fdf, MALLOC_ERR);
 	i = 0;
-	while ( i < fdf->grid_h)
+	while (i < fdf->grid_h)
 	{
 		space[i] = (t_point *)ft_calloc(fdf->grid_w, sizeof(t_point));
 		if (!space[i])

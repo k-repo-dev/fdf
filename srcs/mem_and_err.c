@@ -6,7 +6,7 @@
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 10:04:38 by krepo             #+#    #+#             */
-/*   Updated: 2025/08/11 13:41:34 by krepo            ###   ########.fr       */
+/*   Updated: 2025/08/13 09:59:34 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,20 @@ void	cleanup(t_app *fdf)
 		free_grid(fdf, fdf->screen);
 	free(fdf);
 	get_next_line(-2);
+}
+
+void	free_str_array(char ***arr, int i)
+{
+	if (!*arr)
+		return ;
+	while ((*arr)[i])
+	{
+		free((*arr)[i]);
+		(*arr)[i] = NULL;
+		i++;
+	}
+	free(*arr);
+	*arr = NULL;
 }
 
 static void	free_grid(t_app *fdf, t_point **space)

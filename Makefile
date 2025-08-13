@@ -6,7 +6,7 @@
 #    By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/28 12:56:25 by krepo             #+#    #+#              #
-#    Updated: 2025/08/11 12:25:12 by krepo            ###   ########.fr        #
+#    Updated: 2025/08/12 15:13:35 by krepo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ INC_DIR		:= include
 
 SRCS		:= draw_points.c draw_utils.c fdf.c input.c line_draw.c \
 			   line_draw_utils.c mem_and_err.c parse.c parse_utils.c \
-			   proj_calc.c reset.c view_control.c
+			   proj_calc.c reset.c view_control.c utils.c
 
 HEADER		:= fdf.h
 

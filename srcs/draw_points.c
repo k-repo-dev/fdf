@@ -6,7 +6,7 @@
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/11 08:38:22 by krepo             #+#    #+#             */
-/*   Updated: 2025/08/12 10:35:51 by krepo            ###   ########.fr       */
+/*   Updated: 2025/08/12 15:33:54 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	render_frame(t_app *fdf)
 	while (y < fdf->grid_h)
 	{
 		x = 0;
-		while ( x <fdf->grid_w)
+		while (x < fdf->grid_w)
 		{
 			draw_point(fdf, x, y);
 			x++;
@@ -44,7 +44,7 @@ void	refresh_win(t_app *fdf)
 {
 	clear_image(fdf);
 	render_frame(fdf);
-	mlx_put_image_to_window(fdf->mlx, fdf->win, fdf->img, 0 , 0);
+	mlx_put_image_to_window(fdf->mlx, fdf->win, fdf->img, 0, 0);
 	fdf->min_x_proj = FLT_MAX;
 	fdf->max_x_proj = FLT_MIN;
 	fdf->min_y_proj = FLT_MAX;

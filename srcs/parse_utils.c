@@ -6,11 +6,13 @@
 /*   By: krepo <krepo@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/07 10:46:40 by krepo             #+#    #+#             */
-/*   Updated: 2025/08/11 12:41:28 by krepo            ###   ########.fr       */
+/*   Updated: 2025/08/13 10:20:45 by krepo            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/fdf.h"
+
+static void	process_line(t_app *fdf, char *line);
 
 int	count_grid_dims(t_app *fdf)
 {
@@ -21,22 +23,15 @@ int	count_grid_dims(t_app *fdf)
 	if (fd == -1)
 		exit_error(fdf, FD_ERR);
 	line = get_next_line(fd);
-	if (!line)
-		exit_error(fdf, GET_NEXT_LINE_ERR);
-	if (line)
+	process_line(fdf, line);
+	free(line);
+	while (1)
 	{
-		fdf->grid_h++;
-		count_grid_width(fdf, line);
-	}
-	while (line)
-	{
-		free(line);
 		line = get_next_line(fd);
-		if (line)
-		{
-			count_grid_width(fdf, line);
-			fdf->grid_h++;
-		}
+		if (!line)
+			break ;
+		process_line(fdf, line);
+		free(line);
 	}
 	close(fd);
 	return (fdf->grid_h);
@@ -73,4 +68,25 @@ void	save_point_coords(t_point **space, int x, int y, int z)
 	space[y][x].x = x;
 	space[y][x].y = y;
 	space[y][x].z = z;
+}
+
+bool	parse_coords(t_app *fdf, char **coords, int x, int y)
+{
+	int	val;
+
+	if (!ft_atoi_safe(coords[0], &val))
+		return (false);
+	save_point_coords(fdf->world, x, y, val);
+	return (true);
+}
+
+static void	process_line(t_app *fdf, char *line)
+{
+	if (line)
+	{
+		count_grid_width(fdf, line);
+		fdf->grid_h++;
+	}
+	else
+		exit_error(fdf, GET_NEXT_LINE_ERR);
 }
